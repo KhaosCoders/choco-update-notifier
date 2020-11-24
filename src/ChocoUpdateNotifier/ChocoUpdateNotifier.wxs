@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+  <Product Name='ChocoUpdateNotifier 1.0'
+           Manufacturer='Khaos-Coders'
+           Id='48F23FCC-A11B-483D-A8CD-35D3C6F04D1E'
+           UpgradeCode='F32CFD1F-0EDA-47F4-9DD2-44B1A24B68D6'
+           Language='1033'
+           Codepage='1252'
+           Version='1.0.0'>
+
+    <Package Id='*'
+             Keywords='Installer'
+             Description="Khaos-Coders ChocoUpdateNotifier Installer"
+             Comments='Checks for Chocolatey updates'
+             Manufacturer='Khaos-Coders'
+             InstallerVersion='200'
+             InstallScope="perMachine"
+             Platform="x64"
+             InstallPrivileges="elevated"
+             Languages='1033'
+             Compressed='yes'
+             SummaryCodepage='1252' />
+
+    <Media Id='1' Cabinet='Setup.cab' EmbedCab='yes' />
+
+    <Icon Id="icon.exe" SourceFile="ChocoUpdateNotifier.exe" />
+    <Property Id="ARPPRODUCTICON" Value="icon.exe" />
+
+    <!-- Scheduled Task -->
+    <InstallExecuteSequence>
+      <Custom Action="CreateScheduledTask" After="InstallFiles">
+        NOT Installed
+      </Custom>
+      <Custom Action='RemoveScheduledTask' After='InstallFiles' >
+        Installed AND (REMOVE = "ALL")
+      </Custom>
+    </InstallExecuteSequence>
+
+    <CustomAction Id="CreateScheduledTask"
+                  Return="check"
+                  Impersonate="no"
+                  Execute="deferred"
+                  Directory="TARGETDIR"
+                  ExeCommand="&quot;[SystemFolder]SCHTASKS.EXE&quot; /CREATE /SC ONLOGON /DELAY 0001:00 /TN &quot;Choco Update Notifier&quot; /TR &quot;'[AppRootDirectory]ChocoUpdateNotifier.exe' check&quot; /RU &quot;NT Authority\System&quot; /RP /RL HIGHEST" />
+
+    <CustomAction Id="RemoveScheduledTask"
+                  Return="check"
+                  Impersonate="no"
+                  Execute="deferred"
+                  Directory="TARGETDIR"
+                  ExeCommand="&quot;[SystemFolder]SCHTASKS.EXE&quot; /DELETE /TN &quot;Choco Update Notifier&quot; /F" />
+
+    <!-- Programm Files -->
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+
+      <Directory Id='ProgramFiles64Folder' Name='ProgramFiles64Folder'>
+        <Directory Id='Kc' Name='Khaos-Coders'>
+          <Directory Id='AppRootDirectory' Name='ChocoUpdateNotifier'>
+            <Component Id='MainExecutable' Guid='B1A92CC3-F76A-4D89-8209-5EA4762EBF10' Win64='yes'>
+              <CreateFolder/>
+              <RemoveFolder Id="RemoveAppRootDirectory" On="uninstall" />
+              <RemoveFolder Id="RemoveKc" On="uninstall" Directory="Kc" />
+              <File Id='CunEXE' Name='ChocoUpdateNotifier.exe' Source='ChocoUpdateNotifier.exe' Checksum='yes' />
+
+              <!-- This is needed to tell COM what process to start to activate the COM server for this CLSID -->
+              <RegistryValue Root="HKLM" Key="Software\Classes\CLSID\{4725539A-DBCE-4F06-8711-AF493DCC6016}\LocalServer32" Type="string" Value="[#CunEXE]" KeyPath="yes" />
+            </Component>
+
+            <Component Id="Notifications.dll" Guid="F4872FF7-6B1D-48A1-AEC8-1651F17A842E" Win64='yes'>
+              <File Id='Notifications.dll' Name='Microsoft.Toolkit.Uwp.Notifications.dll' Source='Microsoft.Toolkit.Uwp.Notifications.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedNotification" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="CommandLine.dll" Guid="BB0B99E4-A229-4201-9AA7-2F29118A22A8" Win64='yes'>
+              <File Id='CommandLine.dll' Name='CommandLine.dll' Source='CommandLine.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedCLI" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+
+            <Component Id="ControlzEx.dll" Guid="CC2EC275-7522-475F-9C38-5BBD71225755" Win64='yes'>
+              <File Id='ControlzEx.dll' Name='ControlzEx.dll' Source='ControlzEx.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedControlz" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="MahApps.Metro.dll" Guid="D12D4A7D-D03E-473B-80B6-C6129E04B424" Win64='yes'>
+              <File Id='MahApps.Metro.dll' Name='MahApps.Metro.dll' Source='MahApps.Metro.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedMetro" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="Microsoft.Xaml.Behaviors.dll" Guid="3A33EAFA-A92C-4372-BEF2-EE23F8D1D687" Win64='yes'>
+              <File Id='Microsoft.Xaml.Behaviors.dll' Name='Microsoft.Xaml.Behaviors.dll' Source='Microsoft.Xaml.Behaviors.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedXAMLBehaviors" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder">
+        <!-- This creates a start menu shortcut -->
+        <Component Id="ApplicationShortcut" Guid="5FA58ED0-3EA0-4A8C-A75A-904FB11847B0" Win64='yes'>
+          <Shortcut Id="ApplicationStartMenuShortcut" Name="Chocolatey Update Notifier" Description="Check for updates in Chocolatey" Target="[AppRootDirectory]ChocoUpdateNotifier.exe" WorkingDirectory="AppRootDirectory" Arguments="check">
+            <!--AUMID-->
+            <ShortcutProperty Key="System.AppUserModel.ID" Value="Khaos-Coders.ChocoUpdateNotifier"/>
+            <!--COM CLSID-->
+            <ShortcutProperty Key="System.AppUserModel.ToastActivatorCLSID" Value="{4725539A-DBCE-4F06-8711-AF493DCC6016}"/>
+          </Shortcut>
+          <RegistryValue Root="HKCU" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedCun" Type="integer" Value="1" KeyPath="yes"/>
+        </Component>
+      </Directory>
+
+    </Directory>
+
+    <Feature Id='Complete' Level='1'>
+      <ComponentRef Id='MainExecutable' />
+      <ComponentRef Id='Notifications.dll' />
+      <ComponentRef Id='CommandLine.dll' />
+      <ComponentRef Id='ControlzEx.dll' />
+      <ComponentRef Id='MahApps.Metro.dll' />
+      <ComponentRef Id='Microsoft.Xaml.Behaviors.dll' />
+      <ComponentRef Id='ApplicationShortcut' />
+    </Feature>
+  </Product>
+</Wix>
