@@ -4,6 +4,12 @@ This project installs a scheduled task, that checks for outdated [Chocolatey](ht
 ![Logo](https://github.com/KhaosCoders/choco-update-notifier/blob/v1.0.0/src/ChocoUpdateNotifier/res/Icon.png?raw=true)
 
 # Installation
+## Chocolatey
+It is recommented to use Chocolatey to install this tool:
+`choco install choco-udpate-notifier`
+[Here](https://chocolatey.org/packages/choco-update-notifier) is the official chocolatey package.
+
+## Manual
 Simply download the latest [Relase](https://github.com/KhaosCoders/choco-update-notifier/releases) and run the installer
 (.NET Framework 4.6.2 or greater should be installed on your system)
 

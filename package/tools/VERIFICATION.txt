@@ -1,0 +1,6 @@
+﻿
+VERIFICATION
+Verification is intended to assist the Chocolatey moderators and community
+in verifying that this package's contents are trustworthy.
+ 
+If in doubt, download from https://github.com/KhaosCoders/choco-update-notifier/releases/
