@@ -2,13 +2,13 @@
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
   <Product Name='ChocoUpdateNotifier 1.0'
            Manufacturer='Khaos-Coders'
-           Id='48F23FCC-A11B-483D-A8CD-35D3C6F04D1E'
+           Id='*'
            UpgradeCode='F32CFD1F-0EDA-47F4-9DD2-44B1A24B68D6'
            Language='1033'
            Codepage='1252'
            Version='1.0.1'>
 
-    <Package Id='*'
+      <Package Id='*'
              Keywords='Installer'
              Description="Khaos-Coders ChocoUpdateNotifier Installer"
              Comments='Checks for Chocolatey updates'
@@ -20,6 +20,8 @@
              Languages='1033'
              Compressed='yes'
              SummaryCodepage='1252' />
+
+    <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
 
     <Media Id='1' Cabinet='Setup.cab' EmbedCab='yes' />
 
