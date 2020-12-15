@@ -19,14 +19,16 @@ namespace ChocoUpdateNotifier
             {
                 case UpdateAllAction:
                     Choco.UpdateAllPackages();
-                    Environment.Exit(0);
+                    App.WaitLock.Set();
                     break;
 
                 case UpdateAction:
                 default:
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        new UpdateWindow().Show();
+                        var oWind = new UpdateWindow();
+                        oWind.Closed += (sender, e) => App.WaitLock.Set();
+                        oWind.Show();
                     }));
                     break;
             }

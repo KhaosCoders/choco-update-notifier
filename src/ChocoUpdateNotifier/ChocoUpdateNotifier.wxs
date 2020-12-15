@@ -6,7 +6,7 @@
            UpgradeCode='F32CFD1F-0EDA-47F4-9DD2-44B1A24B68D6'
            Language='1033'
            Codepage='1252'
-           Version='1.0.1'>
+           Version='1.0.2'>
 
       <Package Id='*'
              Keywords='Installer'

@@ -2,6 +2,8 @@
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Windows.UI.Notifications;
 
@@ -21,6 +23,8 @@ namespace ChocoUpdateNotifier
         {
         }
 
+        public static ManualResetEvent WaitLock = new(false);
+
         protected override void OnStartup(StartupEventArgs e)
         {
             // Register AUMID and COM server (for MSIX/sparse package apps, this no-ops)
@@ -36,12 +40,15 @@ namespace ChocoUpdateNotifier
         private void Run(CheckOptions o)
         {
             // Check for outdated packages
-            var pcks = Choco.OutdatedPackages();
+            Task.Run(() => {
+                var pcks = Choco.OutdatedPackages();
 
-            if (pcks.Count > 0)
-            {
-                ShowOutdatedNotification(pcks.Count, string.Join(", ", pcks.Select(p => p.Name)));
-            }
+                if (pcks.Count > 0)
+                {
+                    ShowOutdatedNotification(pcks.Count, string.Join(", ", pcks.Select(p => p.Name)));
+                    Environment.Exit(0);
+                }
+            });
         }
 
         static void ShowOutdatedNotification(int num, string pcks)
@@ -62,17 +69,27 @@ namespace ChocoUpdateNotifier
                 .GetToastContent();
 
             // Create the notification
-            var notif = new ToastNotification(content.GetXml());
+            var notif = new ToastNotification(content.GetXml())
+            {
+                ExpirationTime = DateTimeOffset.Now.AddMinutes(10)
+            };
             notif.Dismissed += Notif_Dismissed;
 
             // And show it!
             var oNotifier = DesktopNotificationManagerCompat.CreateToastNotifier();
             oNotifier.Show(notif);
+
+            WaitLock.WaitOne();
+
+            oNotifier.Hide(notif);
         }
 
         private static void Notif_Dismissed(ToastNotification sender, ToastDismissedEventArgs args)
         {
-            Environment.Exit(0);
+            if (args.Reason != ToastDismissalReason.TimedOut)
+            {
+                WaitLock.Set();
+            }
         }
     }
 }
