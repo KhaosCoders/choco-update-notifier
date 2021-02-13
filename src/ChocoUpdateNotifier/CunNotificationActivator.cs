@@ -1,7 +1,6 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Runtime.InteropServices;
-using System.Windows;
 
 namespace ChocoUpdateNotifier
 {
@@ -24,12 +23,7 @@ namespace ChocoUpdateNotifier
 
                 case UpdateAction:
                 default:
-                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        var oWind = new UpdateWindow();
-                        oWind.Closed += (sender, e) => App.WaitLock.Set();
-                        oWind.Show();
-                    }));
+                    App.ShowUpdateDialog();
                     break;
             }
         }

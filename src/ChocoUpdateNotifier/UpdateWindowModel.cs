@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -42,13 +40,19 @@ namespace ChocoUpdateNotifier
         /// <summary>
         /// Gets or sets the command to update the selected packages
         /// </summary>
-        public ICommand UpdateCommand { get; set; }
+        public ICommand UpdateSelectedCommand { get; set; }
+
+        /// <summary>
+        /// Gets or sets the command to update the selected packages
+        /// </summary>
+        public ICommand UpdateAllCommand { get; set; }
 
         private bool _updating;
 
         public UpdateWindowModel()
         {
-            UpdateCommand = new RelayCommand<object>(UpdateSelectedPackages, _ => !IsLoading && !_updating);
+            UpdateSelectedCommand = new RelayCommand<object>(UpdateSelectedPackages, _ => !IsLoading && !_updating);
+            UpdateAllCommand = new RelayCommand<object>(UpdateAllPackages, _ => !IsLoading && !_updating);
 
             IsLoading = true;
             Task.Run(LoadOutdatedChocoPackages);
@@ -63,7 +67,7 @@ namespace ChocoUpdateNotifier
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 IsLoading = false;
-                foreach(var pck in pcks)
+                foreach (var pck in pcks)
                 {
                     var model = new PackageModel(pck.Name, pck.OldVersion, pck.NewVersion, pck.IsPinned);
                     model.IsSelectedChanged += IsSelectedChanged;
@@ -79,6 +83,18 @@ namespace ChocoUpdateNotifier
             CommandManager.InvalidateRequerySuggested();
 
             Choco.UpdatePackages(Packages.Where(pck => pck.IsSelected).Select(pck => pck.Name).ToArray());
+
+            // End app
+            Environment.Exit(0);
+        }
+
+        private void UpdateAllPackages(object _)
+        {
+            // Disable button
+            _updating = true;
+            CommandManager.InvalidateRequerySuggested();
+
+            Choco.UpdateAllPackages();
 
             // End app
             Environment.Exit(0);
@@ -113,7 +129,7 @@ namespace ChocoUpdateNotifier
 
             private static void OnIsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
             {
-                if(d is PackageModel model)
+                if (d is PackageModel model)
                 {
                     model.IsSelectedChanged?.Invoke(model, null);
                 }

@@ -17,9 +17,13 @@ namespace ChocoUpdateNotifier
         private const string AppId = "Khaos-Coders.ChocoUpdateNotifier";
         private const string MsgId = "KC.CUN.HEADER1";
 
-
         [Verb("check", HelpText = "Check for outdated Chocolatey packages")]
         private class CheckOptions
+        {
+        }
+
+        [Verb("list", HelpText = "List available updates for outdated Chocolatey packages")]
+        private class ListOptions
         {
         }
 
@@ -33,14 +37,16 @@ namespace ChocoUpdateNotifier
             DesktopNotificationManagerCompat.RegisterActivator<CunNotificationActivator>();
 
             // Parse parameters
-            Parser.Default.ParseArguments<CheckOptions>(e.Args)
-                .WithParsed(Run);
+            Parser.Default.ParseArguments<CheckOptions, ListOptions>(e.Args)
+                .WithParsed<CheckOptions>(Run)
+                .WithParsed<ListOptions>(Run);
         }
 
         private void Run(CheckOptions o)
         {
             // Check for outdated packages
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 var pcks = Choco.OutdatedPackages();
 
                 if (pcks.Count > 0)
@@ -49,6 +55,18 @@ namespace ChocoUpdateNotifier
                     Environment.Exit(0);
                 }
             });
+        }
+
+        private void Run(ListOptions o) => ShowUpdateDialog();
+
+        internal static void ShowUpdateDialog()
+        {
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var oWind = new UpdateWindow();
+                oWind.Closed += (sender, e) => App.WaitLock.Set();
+                oWind.Show();
+            }));
         }
 
         static void ShowOutdatedNotification(int num, string pcks)
@@ -61,7 +79,7 @@ namespace ChocoUpdateNotifier
 
             // Construct the content
             var content = new ToastContentBuilder()
-                .AddToastActivationInfo("", ToastActivationType.Foreground)
+                .AddToastActivationInfo("list", ToastActivationType.Background)
                 .AddHeader(MsgId, $"Chocolatey Packages outdated: {num}", "")
                 .AddText(pcks, AdaptiveTextStyle.Body)
                 .AddButton(new ToastButton("Update all", CunNotificationActivator.UpdateAllAction))
