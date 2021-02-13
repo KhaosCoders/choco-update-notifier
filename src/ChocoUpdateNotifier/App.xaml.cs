@@ -35,6 +35,8 @@ namespace ChocoUpdateNotifier
             DesktopNotificationManagerCompat.RegisterAumidAndComServer<CunNotificationActivator>(AppId);
             // Register COM server and activator type
             DesktopNotificationManagerCompat.RegisterActivator<CunNotificationActivator>();
+            // Clear all toasts
+            DesktopNotificationManagerCompat.History.Clear();
 
             // Parse parameters
             Parser.Default.ParseArguments<CheckOptions, ListOptions>(e.Args)
