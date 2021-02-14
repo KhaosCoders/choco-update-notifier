@@ -1,4 +1,5 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
+using Serilog;
 using System;
 using System.Runtime.InteropServices;
 
@@ -14,11 +15,12 @@ namespace ChocoUpdateNotifier
 
         public override void OnActivated(string invokedArgs, NotificationUserInput userInput, string appUserModelId)
         {
+            Log.Information("Activator activated with {Args}", invokedArgs);
             switch (invokedArgs)
             {
                 case UpdateAllAction:
                     Choco.UpdateAllPackages();
-                    App.WaitLock.Set();
+                    Environment.Exit(0);
                     break;
 
                 case UpdateAction:

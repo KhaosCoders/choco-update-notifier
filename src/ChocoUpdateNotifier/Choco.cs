@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -34,6 +35,7 @@ namespace ChocoUpdateNotifier
         /// </summary>
         public static void UpdateAllPackages()
         {
+            Log.Information("Choco update all");
             using Process proc = Process.Start(new ProcessStartInfo("choco.exe", "upgrade all -y")
             {
                 Verb = "runas",
@@ -47,6 +49,7 @@ namespace ChocoUpdateNotifier
         /// <param name="packages">Package names</param>
         public static void UpdatePackages(string[] packages)
         {
+            Log.Information("Choco update packages: {Packages}", packages);
             // Create upgrade script
             string tmpScriptPath = Path.Combine(Path.GetTempPath(), "chocoUpdate.bat");
             if (File.Exists(tmpScriptPath))
@@ -69,6 +72,7 @@ namespace ChocoUpdateNotifier
         /// <returns>list of outdated package names</returns>
         public static IList<ChocoPackage> OutdatedPackages(bool noPinned = true)
         {
+            Log.Debug("Choco list outdated");
             var outdated = RunChoco($"outdated --ignore-unfound {(noPinned ? "--ignore-pinned" : "")} -r");
             return outdated.Split('\n')
                            .Select(line => _pckNamePattern.Match(line))
