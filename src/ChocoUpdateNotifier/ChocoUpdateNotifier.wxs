@@ -6,16 +6,16 @@
            UpgradeCode='F32CFD1F-0EDA-47F4-9DD2-44B1A24B68D6'
            Language='1033'
            Codepage='1252'
-           Version='1.0.2'>
+           Version='1.1.0'>
 
       <Package Id='*'
              Keywords='Installer'
              Description="Khaos-Coders ChocoUpdateNotifier Installer"
              Comments='Checks for Chocolatey updates'
              Manufacturer='Khaos-Coders'
-             InstallerVersion='200'
              InstallScope="perMachine"
              Platform="x64"
+             InstallerVersion="200"
              InstallPrivileges="elevated"
              Languages='1033'
              Compressed='yes'
@@ -36,6 +36,9 @@
       <Custom Action='RemoveScheduledTask' After='InstallFiles' >
         Installed AND (REMOVE = "ALL")
       </Custom>
+      <Custom Action='FixScheduledTask' After='InstallFiles' >
+        Installed
+      </Custom>
     </InstallExecuteSequence>
 
     <CustomAction Id="CreateScheduledTask"
@@ -43,7 +46,7 @@
                   Impersonate="no"
                   Execute="deferred"
                   Directory="TARGETDIR"
-                  ExeCommand="&quot;[SystemFolder]SCHTASKS.EXE&quot; /CREATE /SC ONLOGON /DELAY 0001:00 /TN &quot;Choco Update Notifier&quot; /TR &quot;'[AppRootDirectory]ChocoUpdateNotifier.exe' check&quot; /RU &quot;[%USERDOMAIN]\[LogonUser]&quot; /RL HIGHEST" />
+                  ExeCommand="&quot;[SystemFolder]SCHTASKS.EXE&quot; /CREATE /SC ONLOGON /DELAY 0001:00 /TN &quot;Choco Update Notifier&quot; /TR &quot;'[AppRootDirectory]ChocoUpdateNotifier.exe' check&quot; /RU &quot;[%USERDOMAIN]\[LogonUser]&quot;" />
 
     <CustomAction Id="RemoveScheduledTask"
                   Return="ignore"
@@ -51,6 +54,13 @@
                   Execute="deferred"
                   Directory="TARGETDIR"
                   ExeCommand="&quot;[SystemFolder]SCHTASKS.EXE&quot; /DELETE /TN &quot;Choco Update Notifier&quot; /F" />
+
+    <CustomAction Id="FixScheduledTask"
+                  Return="ignore"
+                  Impersonate="no"
+                  Execute="deferred"
+                  Directory="TARGETDIR"
+                  ExeCommand="&quot;[SystemFolder]SCHTASKS.EXE&quot; /CHANGE /TN &quot;Choco Update Notifier&quot; /RU &quot;[%USERDOMAIN]\[LogonUser]&quot; /RL LIMITED /F" />
 
     <!-- Programm Files -->
     <Directory Id='TARGETDIR' Name='SourceDir'>
@@ -90,6 +100,51 @@
               <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedXAMLBehaviors" Type="integer" Value="1" KeyPath="yes"/>
             </Component>
 
+            <Component Id="Serilog.dll" Guid="9B65A262-3A24-4B07-94E6-B8CB0AB6C03D" Win64='yes'>
+              <File Id='Serilog.dll' Name='Serilog.dll' Source='Serilog.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedSerilog" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="Serilog.Enrichers.Environment.dll" Guid="61F5EE41-6282-499F-8425-EA2CF542CE20" Win64='yes'>
+              <File Id='Serilog.Enrichers.Environment.dll' Name='Serilog.Enrichers.Environment.dll' Source='Serilog.Enrichers.Environment.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedEnrichersEnvironment" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="Serilog.Enrichers.Process.dll" Guid="D2E5F0F7-6C10-439F-ACA0-012F13A625A2" Win64='yes'>
+              <File Id='Serilog.Enrichers.Process.dll' Name='Serilog.Enrichers.Process.dll' Source='Serilog.Enrichers.Process.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedEnrichersProcess" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="Serilog.Exceptions.dll" Guid="862B1BF8-34DB-431E-9051-EA216A996192" Win64='yes'>
+              <File Id='Serilog.Exceptions.dll' Name='Serilog.Exceptions.dll' Source='Serilog.Exceptions.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedSerilogExceptions" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="Serilog.Filters.Expressions.dll" Guid="CBC29065-1A57-4E4E-B28D-66CCD052CBF4" Win64='yes'>
+              <File Id='Serilog.Filters.Expressions.dll' Name='Serilog.Filters.Expressions.dll' Source='Serilog.Filters.Expressions.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedFiltersExpressions" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="Serilog.Formatting.Compact.dll" Guid="604C71B7-14C4-4547-8B11-5ADC4C31D18B" Win64='yes'>
+              <File Id='Serilog.Formatting.Compact.dll' Name='Serilog.Formatting.Compact.dll' Source='Serilog.Formatting.Compact.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedFormattingCompact" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="Serilog.Sinks.Debug.dll" Guid="3B9165E2-94D3-418D-88D6-7BA1D19AE442" Win64='yes'>
+              <File Id='Serilog.Sinks.Debug.dll' Name='Serilog.Sinks.Debug.dll' Source='Serilog.Sinks.Debug.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedSinksDebug" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="Serilog.Sinks.File.dll" Guid="9686296F-AEC2-4C65-B71B-168013A7757F" Win64='yes'>
+              <File Id='Serilog.Sinks.File.dll' Name='Serilog.Sinks.File.dll' Source='Serilog.Sinks.File.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedSinksFile" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="Serilog.Sinks.PeriodicBatching.dll" Guid="C77C2BAD-2FFF-4E9B-8062-A80DC64432D4" Win64='yes'>
+              <File Id='Serilog.Sinks.PeriodicBatching.dll' Name='Serilog.Sinks.PeriodicBatching.dll' Source='Serilog.Sinks.PeriodicBatching.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedSinksPeriodicBatching" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="Serilog.Sinks.Seq.dll" Guid="75C31765-0624-4BA4-B314-1BC304B2643F" Win64='yes'>
+              <File Id='Serilog.Sinks.Seq.dll' Name='Serilog.Sinks.Seq.dll' Source='Serilog.Sinks.Seq.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedSinksSeq" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+            <Component Id="Superpower.dll" Guid="B35D913B-407A-494E-B099-CD825DF58698" Win64='yes'>
+              <File Id='Superpower.dll' Name='Superpower.dll' Source='Superpower.dll' Checksum='yes' />
+              <RegistryValue Root="HKLM" Key="Software\Khaos-Coders\ChocoUpdateNotifier" Name="installedSuperpower" Type="integer" Value="1" KeyPath="yes"/>
+            </Component>
+
           </Directory>
         </Directory>
       </Directory>
@@ -117,6 +172,18 @@
       <ComponentRef Id='MahApps.Metro.dll' />
       <ComponentRef Id='Microsoft.Xaml.Behaviors.dll' />
       <ComponentRef Id='ApplicationShortcut' />
+
+      <ComponentRef Id='Serilog.dll' />
+      <ComponentRef Id='Serilog.Enrichers.Environment.dll' />
+      <ComponentRef Id='Serilog.Enrichers.Process.dll' />
+      <ComponentRef Id='Serilog.Exceptions.dll' />
+      <ComponentRef Id='Serilog.Filters.Expressions.dll' />
+      <ComponentRef Id='Serilog.Formatting.Compact.dll' />
+      <ComponentRef Id='Serilog.Sinks.Debug.dll' />
+      <ComponentRef Id='Serilog.Sinks.File.dll' />
+      <ComponentRef Id='Serilog.Sinks.PeriodicBatching.dll' />
+      <ComponentRef Id='Serilog.Sinks.Seq.dll' />
+      <ComponentRef Id='Superpower.dll' />
     </Feature>
   </Product>
 </Wix>
