@@ -16,6 +16,15 @@ namespace ChocoUpdateNotifier
         public override void OnActivated(string invokedArgs, NotificationUserInput userInput, string appUserModelId)
         {
             Log.Information("Activator activated with {Args}", invokedArgs);
+            // Clear all toasts
+            try
+            {
+                DesktopNotificationManagerCompat.History.Clear();
+            }
+            catch (Exception)
+            {
+                // Ignore errors (when notification service is not available)
+            }
             switch (invokedArgs)
             {
                 case UpdateAllAction:

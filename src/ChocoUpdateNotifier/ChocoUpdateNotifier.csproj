@@ -7,11 +7,13 @@
     <LangVersion>latest</LangVersion>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <StartupObject>ChocoUpdateNotifier.App</StartupObject>
-    <Version>1.0.3</Version>
+    <Version>1.1.1</Version>
     <Authors>Khaos</Authors>
     <Company>Khaos-Coders</Company>
     <Description>Checks for Chocolatey updates and notifies the user</Description>
     <Copyright />
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <FileVersion>1.1.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
