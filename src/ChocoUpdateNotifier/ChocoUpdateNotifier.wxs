@@ -1,12 +1,12 @@
-﻿<?xml version='1.0' encoding='Windows-1252'?>
+<?xml version='1.0' encoding='Windows-1252'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
-  <Product Name='ChocoUpdateNotifier 1.1'
+  <Product Name='ChocoUpdateNotifier 1.2'
            Manufacturer='Khaos-Coders'
            Id='*'
            UpgradeCode='F32CFD1F-0EDA-47F4-9DD2-44B1A24B68D6'
            Language='1033'
            Codepage='1252'
-           Version='1.1.1'>
+           Version='1.2.0'>
 
     <Package Id='*'
            Keywords='Installer'
