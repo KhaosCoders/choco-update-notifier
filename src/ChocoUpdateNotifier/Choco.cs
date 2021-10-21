@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Documents;
 
 namespace ChocoUpdateNotifier
 {
@@ -36,11 +37,11 @@ namespace ChocoUpdateNotifier
         public static void UpdateAllPackages()
         {
             Log.Information("Choco update all");
-            using Process proc = Process.Start(new ProcessStartInfo("choco.exe", "upgrade all -y")
-            {
-                Verb = "runas",
-                UseShellExecute = true
-            });
+
+            var procInfo = IsChocoBackgroundServiceActive()
+                ? new ProcessStartInfo("choco.exe", "upgrade all -y") { UseShellExecute = true }
+                : new ProcessStartInfo("choco.exe", "upgrade all -y") { UseShellExecute = true, Verb = "runas" };
+            using Process proc = Process.Start(procInfo);
         }
 
         /// <summary>
@@ -58,12 +59,19 @@ namespace ChocoUpdateNotifier
             }
             File.WriteAllText(tmpScriptPath, string.Join(Environment.NewLine, packages.Select(pck => $"choco.exe upgrade {pck} -y").ToArray()));
 
-            // Run as admin
-            using Process proc = Process.Start(new ProcessStartInfo(tmpScriptPath)
-            {
-                Verb = "runas",
-                UseShellExecute = true
-            });
+            var procInfo = IsChocoBackgroundServiceActive()
+                ? new ProcessStartInfo(tmpScriptPath) { UseShellExecute = true }
+                : new ProcessStartInfo(tmpScriptPath) { UseShellExecute = true, Verb = "runas" };
+            using Process proc = Process.Start(procInfo);
+        }
+
+        public static bool IsChocoBackgroundServiceActive()
+        {
+            Log.Debug("Check if choco backrgound service is used...");
+            var features = RunChoco("features list");
+            bool serviceUsed = features.Contains("[x] useBackgroundService ");
+            Log.Information($"Choco background service: {(serviceUsed ? "used" : "not used")}");
+            return serviceUsed;
         }
 
         /// <summary>
