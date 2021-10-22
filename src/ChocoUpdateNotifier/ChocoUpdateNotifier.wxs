@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='Windows-1252'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
-  <Product Name='ChocoUpdateNotifier 1.2'
+  <Product Name='ChocoUpdateNotifier'
            Manufacturer='Khaos-Coders'
            Id='*'
            UpgradeCode='F32CFD1F-0EDA-47F4-9DD2-44B1A24B68D6'
            Language='1033'
            Codepage='1252'
-           Version='1.2.0'>
+           Version='1.2.1'>
 
     <Package Id='*'
            Keywords='Installer'
@@ -46,7 +46,7 @@
                   Impersonate="no"
                   Execute="deferred"
                   Directory="TARGETDIR"
-                  ExeCommand="&quot;[SystemFolder]SCHTASKS.EXE&quot; /CREATE /SC ONLOGON /DELAY 0001:00 /TN &quot;Choco Update Notifier&quot; /TR &quot;'[AppRootDirectory]ChocoUpdateNotifier.exe' check&quot; /RU &quot;[%USERDOMAIN]\[LogonUser]&quot;" />
+                  ExeCommand="&quot;[SystemFolder]SCHTASKS.EXE&quot; /CREATE /F /SC ONLOGON /DELAY 0001:00 /TN &quot;Choco Update Notifier&quot; /TR &quot;'[AppRootDirectory]ChocoUpdateNotifier.exe' check&quot; /RU &quot;[%USERDOMAIN]\[LogonUser]&quot;" />
 
     <CustomAction Id="RemoveScheduledTask"
                   Return="ignore"

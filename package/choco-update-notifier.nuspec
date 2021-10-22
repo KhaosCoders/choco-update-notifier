@@ -26,7 +26,7 @@ This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Refe
     <!-- version should MATCH as closely as possible with the underlying software -->
     <!-- Is the version a prerelease of a version? https://docs.nuget.org/create/versioning#creating-prerelease-packages -->
     <!-- Note that unstable versions like 0.0.1 can be considered a released version, but it's possible that one can release a 0.0.1-beta before you release a 0.0.1 version. If the version number is final, that is considered a released version and not a prerelease. -->
-    <version>1.2</version>
+    <version>1.2.1</version>
     <packageSourceUrl>https://github.com/KhaosCoders/choco-update-notifier</packageSourceUrl>
     <!-- owners is a poor name for maintainers of the package. It sticks around by this name for compatibility reasons. It basically means you. -->
     <owners>Khaos-Coders</owners>
@@ -50,7 +50,7 @@ This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Refe
     <tags>choco-update-notifier choco update notifier outdated packages</tags>
     <summary>Automatically get a Windows10 notification if your Chocolatey packages are outdated</summary>
     <description>This tool notifies you after each logon into Windows10 about outdated Chocolatey packages. You can then choose to update all or just a selection of these packages.</description>
-    <releaseNotes>1.2: Support updates via choco background service</releaseNotes>
+    <releaseNotes>1.2.1: Fix for SCHTASKS question while upgrade</releaseNotes>
     <!-- =============================== -->
 
     <!-- Specifying dependencies and version ranges? https://docs.nuget.org/create/versioning#specifying-version-ranges-in-.nuspec-files -->
